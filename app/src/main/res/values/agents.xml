@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="agents">
+        <item>Brimstone</item>
+        <item>Phoenix</item>
+        <item>Sage</item>
+        <item>Sova</item>
+        <item>Viper</item>
+        <item>Cypher</item>
+        <item>Reyna</item>
+        <item>Killjoy</item>
+        <item>Breach</item>
+        <item>Omen</item>
+        <item>Jett</item>
+        <item>Raze</item>
+        <item>Skye</item>
+        <item>Yoru</item>
+        <item>Astra</item>
+        <item>KAY/O</item>
+        <item>Chamber</item>
+        <item>Neon</item>
+        <item>Fade</item>
+    </string-array>
+</resources>
