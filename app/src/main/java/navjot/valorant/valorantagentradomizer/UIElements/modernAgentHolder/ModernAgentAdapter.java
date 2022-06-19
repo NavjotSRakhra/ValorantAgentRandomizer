@@ -3,21 +3,26 @@ package navjot.valorant.valorantagentradomizer.UIElements.modernAgentHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.Serializable;
 import java.util.List;
 
 import navjot.valorant.valorantagentradomizer.MainActivity;
 import navjot.valorant.valorantagentradomizer.R;
 import navjot.valorant.valorantagentradomizer.valorant.AgentFlag;
 
-public class ModernAgentAdapter extends RecyclerView.Adapter<AgentDataViewHolder> {
+public class ModernAgentAdapter extends RecyclerView.Adapter<AgentDataViewHolder> implements Serializable {
     private final List<AgentData> agentDataList;
+    private final Animation scaleUp, scaleDown;
 
-    public ModernAgentAdapter(List<AgentData> agentDataList) {
+    public ModernAgentAdapter(List<AgentData> agentDataList, Animation scaleUp, Animation scaleDown) {
         this.agentDataList = agentDataList;
+        this.scaleUp = scaleUp;
+        this.scaleDown = scaleDown;
     }
 
     @NonNull
@@ -32,6 +37,8 @@ public class ModernAgentAdapter extends RecyclerView.Adapter<AgentDataViewHolder
         holder.getAgentNameTextField().setText(agentDataList.get(position).getAgentName());
         holder.getSelect().setCardBackgroundColor(agentDataList.get(position).getBackgroundResourceID());
         holder.getAgentNameTextField().setOnClickListener(v -> {
+            v.startAnimation(scaleUp);
+            v.startAnimation(scaleDown);
             AgentFlag agentFlags = MainActivity.getAgentFlags();
             agentFlags.invertAgent(agentFlags.getAgent(position));
             if (agentFlags.getAgentState(agentFlags.getAgent(position))) {
@@ -48,20 +55,4 @@ public class ModernAgentAdapter extends RecyclerView.Adapter<AgentDataViewHolder
     public int getItemCount() {
         return agentDataList.size();
     }
-
-//    @Override
-//    public void onClick(View v) {
-//        AgentFlag agentFlags = MainActivity.getAgentFlags();
-//        TextView view = (TextView) ((CardView) ((RelativeLayout) ((CardView) ((RelativeLayout) v).getChildAt(0)).getChildAt(0)).getChildAt(0)).getChildAt(0);
-//        String agent = view.getText().toString();
-//        int agentCode = agentFlags.getAgentCode(agent);
-//        agentFlags.invertAgent(agent);
-//        boolean isSelected = agentFlags.getAgentState(agent);
-//        if (isSelected) {
-//            ((CardView) ((RelativeLayout) v).getChildAt(0)).setCardBackgroundColor(Color.parseColor("#FF0000"));
-//        } else {
-//            ((CardView) ((RelativeLayout) v).getChildAt(0)).setCardBackgroundColor(Color.parseColor("#FFFFFF"));
-//        }
-//        System.out.println(agentFlags);
-//    }
 }

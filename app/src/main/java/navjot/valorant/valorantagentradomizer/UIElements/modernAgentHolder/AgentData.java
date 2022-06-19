@@ -1,6 +1,8 @@
 package navjot.valorant.valorantagentradomizer.UIElements.modernAgentHolder;
 
-public class AgentData {
+import java.io.Serializable;
+
+public class AgentData implements Serializable {
     private String agentName;
     private int backgroundResourceID;
 

@@ -2,10 +2,10 @@ package navjot.valorant.valorantagentradomizer.valorant;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-@SuppressWarnings("SpellCheckingInspection")
-public class AgentFlag {
+public class AgentFlag implements Serializable {
     //TODO Convert Agent and Agent to resources;
     private static int CURRENT_AGENT_COUNT;
     private static String[] AGENTS;
