@@ -1,6 +1,8 @@
 package navjot.valorant.valorantagentradomizer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -34,19 +36,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        scaleUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_up);
-        scaleDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_down);
-
-        SELECTED = ResourcesCompat.getColor(getResources(), R.color.selected, null);
-        UNSELECTED = ResourcesCompat.getColor(getResources(), R.color.unselected, null);
-
         if (savedInstanceState != null) {
-            restoreRecyclerView(savedInstanceState);
+            restoreAgentFlagsAndRecyclerView(savedInstanceState);
         } else {
             initializeAgentFlagsAndRecyclerView();
         }
 
         findViewById(R.id.generate).setOnClickListener(this::generateButtonListener);
+        findViewById(R.id.helpFloatingActionButton).setOnClickListener(this::helpFloatingActionButtonListener);
     }
 
     @Override
@@ -59,44 +56,57 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+
+        restoreAgentFlagsAndRecyclerView(savedInstanceState);
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    private void restoreAgentFlagsAndRecyclerView(@NonNull Bundle savedInstanceState) {
+        agentFlags = (AgentFlag) savedInstanceState.getSerializable("agentFlags");
+        agentDataList = (ArrayList<AgentData>) savedInstanceState.getSerializable("agentDataList");
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+
+        initializeRecyclerViewWithCurrentData();
+
+        modernAgentAdapter.notifyItemRangeChanged(0, agentDataList.size());
+        recyclerView.scrollTo(0, savedInstanceState.getInt("positionX"));
+    }
+
+    private void initializeAgentFlagsAndRecyclerView() {
+        String[] array = getResources().getStringArray(R.array.agents);
+        agentFlags = new AgentFlag(array);
+
+        initializeRecyclerViewWithCurrentData();
+
+        int c = 0;
+        for (String s : array) {
+            agentDataList.add(new AgentData(s, SELECTED));
+            modernAgentAdapter.notifyItemInserted(c++);
+        }
+    }
+
+    private void initializeRecyclerViewWithCurrentData() {
+
         scaleUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_down);
 
         SELECTED = ResourcesCompat.getColor(getResources(), R.color.selected, null);
         UNSELECTED = ResourcesCompat.getColor(getResources(), R.color.unselected, null);
 
-        restoreRecyclerView(savedInstanceState);
+        int spanCount = 5;
 
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    private void restoreRecyclerView(@NonNull Bundle savedInstanceState) {
-        agentFlags = (AgentFlag) savedInstanceState.getSerializable("agentFlags");
-        agentDataList = (ArrayList<AgentData>) savedInstanceState.getSerializable("agentDataList");
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        modernAgentAdapter = new ModernAgentAdapter(agentDataList, scaleUp, scaleDown);
-        GridLayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 3);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(modernAgentAdapter);
-        modernAgentAdapter.notifyDataSetChanged();
-        recyclerView.scrollTo(0, savedInstanceState.getInt("positionX"));
-    }
-
-    private void initializeAgentFlagsAndRecyclerView() {
-        modernAgentAdapter = new ModernAgentAdapter(agentDataList, scaleUp, scaleDown);
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        GridLayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 3);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(modernAgentAdapter);
-        String[] array = getResources().getStringArray(R.array.agents);
-        agentFlags = new AgentFlag(array);
-        int c = 0;
-        for (String s : array) {
-            agentDataList.add(new AgentData(s, SELECTED));
-            modernAgentAdapter.notifyItemInserted(c++);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            spanCount = 3;
         }
+        modernAgentAdapter = new ModernAgentAdapter(agentDataList, scaleUp, scaleDown);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+
+        GridLayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), spanCount);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(modernAgentAdapter);
     }
 
     public void generateButtonListener(View v) {
@@ -107,6 +117,11 @@ public class MainActivity extends Activity {
             runOnUiThread(() -> Toast.makeText(getApplicationContext(), agent, Toast.LENGTH_SHORT).show()
             );
         }).start();
+    }
+
+    public void helpFloatingActionButtonListener(View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.help).setMessage(R.string.help_dialog_content).setPositiveButton(R.string.ok, null).show();
     }
 
     public static AgentFlag getAgentFlags() {

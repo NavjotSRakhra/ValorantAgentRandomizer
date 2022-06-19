@@ -3,4 +3,7 @@
     <string name="app_name">Valorant Agent Randomizer</string>
     <string name="generate">"ਬਨਾਓ "</string>
     <string name="hello_world">ਹੈਲੋ ਵਰਲਡ</string>
+    <string name="ok">ਹਾਂ</string>
+    <string name="help">ਮਦਦ</string>
+    <string name="help_dialog_content">ਬਟਨ ਦੀ ਲਾਲ ਸਰਹਦ ਦਾ ਮਤਲਬ ਹੈ ਕਿ ਏਜੇਂਟ ਚੁਣਿਆ ਗਯਾ ਹੈ।\n\nਬਟਨ ਦੀ ਚਿੱਟੀ ਸਰਹਦ ਦਾ ਮਤਲਬ ਹੈ ਕੇ ਏਜੇਂਟ ਚੁਣਿਆ ਨਹੀਂ ਗਯਾ।\n\n\"ਬਨਾਓ\" ਬਟਨ ਦੱਬਣ ਤੇ ਚੁਣੇ ਹੋਏ ਏਜੇੰਟ੍ਸ ਵਿਚੋਂ ਇੱਕ ਏਜੇਂਟ ਸਾਹਮਣੇ ਪੇਸ਼ ਹੋਵੇਗਾ।</string>
 </resources>
