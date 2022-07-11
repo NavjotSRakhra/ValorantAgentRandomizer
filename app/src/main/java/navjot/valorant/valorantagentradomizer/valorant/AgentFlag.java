@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 public class AgentFlag implements Serializable {
-    //TODO Convert Agent and Agent to resources;
     private static int CURRENT_AGENT_COUNT;
     private static String[] AGENTS;
     private final boolean[] agentsChecked;

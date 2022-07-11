@@ -36,19 +36,27 @@ public class ModernAgentAdapter extends RecyclerView.Adapter<AgentDataViewHolder
     public void onBindViewHolder(@NonNull AgentDataViewHolder holder, int position) {
         holder.getAgentNameTextField().setText(agentDataList.get(position).getAgentName());
         holder.getSelect().setCardBackgroundColor(agentDataList.get(position).getBackgroundResourceID());
-        holder.getAgentNameTextField().setOnClickListener(v -> {
-            v.startAnimation(scaleUp);
-            v.startAnimation(scaleDown);
-            AgentFlag agentFlags = MainActivity.getAgentFlags();
-            agentFlags.invertAgent(agentFlags.getAgent(position));
-            if (agentFlags.getAgentState(agentFlags.getAgent(position))) {
-                holder.getSelect().setCardBackgroundColor(MainActivity.SELECTED);
-                agentDataList.get(position).setBackgroundResourceID(MainActivity.SELECTED);
-            } else {
-                holder.getSelect().setCardBackgroundColor(MainActivity.UNSELECTED);
-                agentDataList.get(position).setBackgroundResourceID(MainActivity.UNSELECTED);
-            }
-        });
+
+        holder.getAgentNameTextField().setOnClickListener(v -> agentClicked(v, holder, position));
+    }
+
+    private void agentClicked(View v, AgentDataViewHolder holder, int position) {
+
+        holder.getSelect().startAnimation(scaleUp);
+        holder.getSelect().startAnimation(scaleDown);
+
+
+        AgentFlag agentFlags = MainActivity.getAgentFlags();
+        agentFlags.invertAgent(agentFlags.getAgent(position));
+
+        if (agentFlags.getAgentState(agentFlags.getAgent(position))) {
+            holder.getSelect().setCardBackgroundColor(MainActivity.SELECTED);
+            agentDataList.get(position).setBackgroundResourceID(MainActivity.SELECTED);
+        } else {
+            holder.getSelect().setCardBackgroundColor(MainActivity.UNSELECTED);
+            agentDataList.get(position).setBackgroundResourceID(MainActivity.UNSELECTED);
+        }
+
     }
 
     @Override
