@@ -64,6 +64,7 @@ public class MainActivity extends Activity {
 
     private void restoreAgentFlagsAndRecyclerView(@NonNull Bundle savedInstanceState) {
         agentFlags = (AgentFlag) savedInstanceState.getSerializable("agentFlags");
+        //noinspection unchecked
         agentDataList = (ArrayList<AgentData>) savedInstanceState.getSerializable("agentDataList");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
 
@@ -120,6 +121,10 @@ public class MainActivity extends Activity {
     }
 
     public void helpFloatingActionButtonListener(View v) {
+
+        v.startAnimation(scaleUp);
+        v.startAnimation(scaleDown);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.help).setMessage(R.string.help_dialog_content).setPositiveButton(R.string.ok, null).show();
     }
