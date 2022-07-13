@@ -12,6 +12,6 @@
     <color name="dark_background">#444444</color>
     <color name="dark_background_2">#222222</color>
     <color name="dark_text">#FFFFFF</color>
-    <color name="selected">#FF0000</color>
-    <color name="unselected">#FFFFFF</color>
+    <color name="selected">#FFFFFF</color>
+    <color name="unselected">#FF000000</color>
 </resources>
