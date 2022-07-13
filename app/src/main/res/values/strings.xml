@@ -5,5 +5,5 @@
     <string name="credits_for_app_icon" translatable="false">https://www.vecteezy.com/</string>
     <string name="ok">OK</string>
     <string name="help">Help</string>
-    <string name="help_dialog_content">The red border of the button indicates the agent has been selected.\n\nThe white border of the button indicates the agent has been de-selected.\n\nClicking on the Generate button picks a random Agent from selected agents.</string>
+    <string name="help_dialog_content">The white border of the button indicates the agent has been selected.\n\nThe black border of the button indicates the agent has been de-selected.\n\nClicking on the Generate button picks a random Agent from selected agents.</string>
 </resources>
