@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -93,7 +92,7 @@ public class MainActivity extends Activity {
         try {
 
             if (((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo().isAvailable()) {
-                int c = 0;
+                int c;
 
                 URL url = new URL(MainActivity.latestReleaseURL);
                 HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
