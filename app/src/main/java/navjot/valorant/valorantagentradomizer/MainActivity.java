@@ -1,35 +1,45 @@
 package navjot.valorant.valorantagentradomizer;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultCaller;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+import java.io.FileNotFoundException;
+import java.security.Permission;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import navjot.valorant.valorantagentradomizer.UIElements.modernAgentHolder.AgentData;
 import navjot.valorant.valorantagentradomizer.UIElements.modernAgentHolder.ModernAgentAdapter;
+import navjot.valorant.valorantagentradomizer.update.Updatable;
+import navjot.valorant.valorantagentradomizer.update.Update;
 import navjot.valorant.valorantagentradomizer.valorant.AgentFlag;
 
 public class MainActivity extends Activity {
@@ -41,10 +51,7 @@ public class MainActivity extends Activity {
     private static AgentFlag agentFlags;
     private Animation scaleUp, scaleDown;
     private static final String buildVersionName = BuildConfig.VERSION_NAME;
-    private static final String latestReleaseURL = "https://api.github.com/repos/NavjotSRakhra/ValorantAgentRandomizer/releases/latest";
-    private static String latestBuildVersion = "@";
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(1);
-    private static String latestReleaseResponse = "@";
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,61 +67,48 @@ public class MainActivity extends Activity {
         findViewById(R.id.generate).setOnClickListener(this::generateButtonListener);
         findViewById(R.id.helpFloatingActionButton).setOnClickListener(this::helpFloatingActionButtonListener);
 
-        checkUpdates(executorService, this::update);
+        Updatable checkUpdatable = new Updatable(this, buildVersionName, "NavjotSRakhra", "ValorantAgentRandomizer");
+        checkUpdatable.checkUpdates(executorService, this::newUpdateAvailable);
     }
 
-    private void update(String updateLink) {
-
-    }
-
-    private void checkUpdates(Executor executor, OnUpdatable actionIfUpdatable) {
-        executor.execute(() -> {
-            latestBuildVersion = getLatestBuildVersion();
-            if (isUpdatable()) {
-                String updateLink = getUpdateLink();
-                actionIfUpdatable.onComplete(updateLink);
-            }
+    private void newUpdateAvailable(String updateLink) {
+        SharedPreferences pref = this.getSharedPreferences("download_prompt", Context.MODE_PRIVATE);
+        int n = pref.getInt("down", 1);
+        if (n == 0)
+            return;
+        runOnUiThread(() -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.new_version_available).setMessage(R.string.download_prompt).setPositiveButton(R.string.yes, (dialogInterface, i) -> {
+                Update updater = new Update(this, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString(), updateLink);
+                executorService.execute(() -> downloadAndInstall(updater));
+            }).setNegativeButton(R.string.no, null).setNeutralButton(R.string.dont_prompt_again, (dialogInterface, i) -> {
+                pref.edit().putInt("down", 0).apply();
+            }).show();
         });
     }
 
-    private String getUpdateLink() {
-        String temp = latestReleaseResponse.substring(latestReleaseResponse.indexOf("browser_download_url") + ("browser_download_url\": ".length()));
-        temp = temp.substring(0, temp.indexOf("\""));
-        return temp;
-    }
-
-    private boolean isUpdatable() {
-        System.out.println(latestBuildVersion + "|" + buildVersionName);
-        return !latestBuildVersion.equals(buildVersionName);
-    }
-
-    private String getLatestBuildVersion() {
-        try {
-
-            if (((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo().isAvailable()) {
-                int c;
-
-                URL url = new URL(MainActivity.latestReleaseURL);
-                HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
-                InputStream in = httpsURLConnection.getInputStream();
-
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while (-1 != (c = in.read())) {
-                    stringBuilder.appendCodePoint(c);
-                }
-                in.close();
-                httpsURLConnection.disconnect();
-
-                latestReleaseResponse = stringBuilder.toString();
-                String tag_name = latestReleaseResponse.substring(latestReleaseResponse.indexOf("tag_name") + ("tag_name\": ".length()));
-                return tag_name.substring(1, tag_name.indexOf('\"'));
-            }
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+    private void downloadAndInstall(Update update) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE}, 231);
         }
-        return buildVersionName;
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            String fileName = this.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).getString("fileName", "n");
+            System.out.println(this.getSharedPreferences("downloadedFileName", MODE_PRIVATE).getAll());
+            System.out.println(fileName);
+            if (fileName.equals("n")) {
+                update.download();
+            }
+            try {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.REQUEST_INSTALL_PACKAGES) == PackageManager.PERMISSION_DENIED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES}, 232);
+                }
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.REQUEST_INSTALL_PACKAGES) == PackageManager.PERMISSION_DENIED) {
+                    update.install();
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -202,4 +196,3 @@ public class MainActivity extends Activity {
         return agentFlags;
     }
 }
-//Updated java version from java 8 to java 11
