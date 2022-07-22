@@ -5,4 +5,9 @@
     <string name="ok">OK</string>
     <string name="help">Help</string>
     <string name="help_dialog_content">The white border of the button indicates the agent has been selected.\n\nThe black border of the button indicates the agent has been de-selected.\n\nClicking on the Generate button picks a random Agent from selected agents.</string>
+    <string name="new_version_available">Newer version of app available!</string>
+    <string name="download_prompt">Would you like to update the app?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="dont_prompt_again">Do not show this dialog again</string>
 </resources>

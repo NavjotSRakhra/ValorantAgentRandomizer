@@ -6,4 +6,9 @@
     <string name="ok">ਹਾਂ</string>
     <string name="help">ਮਦਦ</string>
     <string name="help_dialog_content">ਬਟਨ ਦੀ ਚਿੱਟੀ ਸਰਹਦ ਦਾ ਮਤਲਬ ਹੈ ਕਿ ਏਜੇਂਟ ਚੁਣਿਆ ਗਯਾ ਹੈ।\n\nਬਟਨ ਦੀ ਕਾਲੀ ਸਰਹਦ ਦਾ ਮਤਲਬ ਹੈ ਕੇ ਏਜੇਂਟ ਚੁਣਿਆ ਨਹੀਂ ਗਯਾ।\n\n\"ਬਨਾਓ\" ਬਟਨ ਦੱਬਣ ਤੇ ਚੁਣੇ ਹੋਏ ਏਜੇੰਟ੍ਸ ਵਿਚੋਂ ਇੱਕ ਏਜੇਂਟ ਸਾਹਮਣੇ ਪੇਸ਼ ਹੋਵੇਗਾ।</string>
+    <string name="new_version_available">ਐਪ ਦਾ ਨਵਾਂ ਸੰਸਕਰਣ ਆ ਗਯਾ ਹੈ।</string>
+    <string name="download_prompt">ਕੀ ਐਪ ਅਪਡੇਟ ਕੀਤੀ ਜਾਵੇ?</string>
+    <string name="yes">ਹਾਂ</string>
+    <string name="no">ਨਹੀਂ</string>
+    <string name="dont_prompt_again">ਇਹ ਦੁਬਾਰਾ ਨਾ ਦਿਖਾਨਾ।</string>
 </resources>
