@@ -1,12 +1,9 @@
 package navjot.valorant.valorantagentradomizer;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,23 +12,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultCaller;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.PermissionChecker;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.FileNotFoundException;
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,10 +40,12 @@ public class MainActivity extends Activity {
     private Animation scaleUp, scaleDown;
     private static final String buildVersionName = BuildConfig.VERSION_NAME;
     private static final ExecutorService executorService = Executors.newFixedThreadPool(2);
+    public static MainActivity obj;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        obj = this;
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState != null) {
@@ -81,33 +71,19 @@ public class MainActivity extends Activity {
             builder.setTitle(R.string.new_version_available).setMessage(R.string.download_prompt).setPositiveButton(R.string.yes, (dialogInterface, i) -> {
                 Update updater = new Update(this, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString(), updateLink);
                 executorService.execute(() -> downloadAndInstall(updater));
-            }).setNegativeButton(R.string.no, null).setNeutralButton(R.string.dont_prompt_again, (dialogInterface, i) -> {
-                pref.edit().putInt("down", 0).apply();
-            }).show();
+            }).setNegativeButton(R.string.no, null).setNeutralButton(R.string.dont_prompt_again, (dialogInterface, i) -> pref.edit().putInt("down", 0).apply()).show();
         });
     }
 
     private void downloadAndInstall(Update update) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE}, 231);
+        String fileName = this.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).getString("fileName", "n");
+        if (fileName.equals("n")) {
+            update.download();
         }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-            String fileName = this.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).getString("fileName", "n");
-            System.out.println(this.getSharedPreferences("downloadedFileName", MODE_PRIVATE).getAll());
-            System.out.println(fileName);
-            if (fileName.equals("n")) {
-                update.download();
-            }
-            try {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.REQUEST_INSTALL_PACKAGES) == PackageManager.PERMISSION_DENIED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES}, 232);
-                }
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.REQUEST_INSTALL_PACKAGES) == PackageManager.PERMISSION_DENIED) {
-                    update.install();
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+        try {
+            update.install();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 

@@ -67,7 +67,7 @@ public class Update {
             os.flush();
             os.close();
             isDownloaded = true;
-            SharedPreferences.Editor ed =  context.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).edit();
+            SharedPreferences.Editor ed = context.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).edit();
             ed.putString("fileName", updatePath);
             ed.commit();
             downloadStream.close();
@@ -89,7 +89,6 @@ public class Update {
             install.setData(apkURI);
             install.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             context.startActivity(install);
-            context.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).edit().remove("fileName").apply();
             return;
         }
 
