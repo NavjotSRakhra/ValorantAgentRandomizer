@@ -64,6 +64,8 @@ public class MainActivity extends Activity {
     private void newUpdateAvailable(String updateLink) {
         SharedPreferences pref = this.getSharedPreferences("download_prompt", Context.MODE_PRIVATE);
         int n = pref.getInt("down", 1);
+        System.out.println("download pref");
+        System.out.println(n);
         if (n == 0)
             return;
         runOnUiThread(() -> {
@@ -77,6 +79,8 @@ public class MainActivity extends Activity {
 
     private void downloadAndInstall(Update update) {
         String fileName = this.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).getString("fileName", "n");
+        System.out.println("shared preference");
+        System.out.println(fileName);
         if (fileName.equals("n")) {
             update.download();
         }

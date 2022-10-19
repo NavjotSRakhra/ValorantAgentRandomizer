@@ -1,10 +1,15 @@
 package navjot.valorant.valorantagentradomizer.update;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -107,6 +112,9 @@ public class Update {
     public static void deleteFile(Context context) {
         String fileName = context.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).getString("fileName", null);
         if (fileName != null) {
+            if (!(ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 213);
+            }
             new File(fileName).delete();
         }
         context.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).edit().remove("fileName").apply();

@@ -26,8 +26,12 @@ public class Updatable {
     public void checkUpdates(Executor executor, OnUpdatable actionIfUpdatable) {
         executor.execute(() -> {
             latestBuildVersion = getLatestBuildVersion();
+            System.out.println("Checking for updates");
+            System.out.println(latestBuildVersion);
             if (isUpdatable()) {
                 String updateLink = getUpdateLink();
+                System.out.println("update link");
+                System.out.println(updateLink);
                 actionIfUpdatable.onComplete(updateLink);
             }else {
                 Update.deleteFile(context);
