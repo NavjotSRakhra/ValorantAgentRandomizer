@@ -10,8 +10,6 @@ import java.util.concurrent.Executor;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import navjot.valorant.valorantagentradomizer.OnUpdatable;
-
 public class Updatable {
     private String latestBuildVersion, latestReleaseResponse;
     private final String buildVersionName, latestReleaseURL;
