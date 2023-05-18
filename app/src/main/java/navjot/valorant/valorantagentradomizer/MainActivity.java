@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -18,6 +19,8 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -40,12 +43,12 @@ public class MainActivity extends Activity {
     private Animation scaleUp, scaleDown;
     private static final String buildVersionName = BuildConfig.VERSION_NAME;
     private static final ExecutorService executorService = Executors.newFixedThreadPool(2);
-    public static MainActivity obj;
+    @SuppressWarnings("FieldCanBeLocal")
+    private FirebaseAnalytics firebaseAnalytics;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        obj = this;
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState != null) {
@@ -53,6 +56,12 @@ public class MainActivity extends Activity {
         } else {
             initializeAgentFlagsAndRecyclerView();
         }
+
+        initializeListenersAndAnalyticsAndUpdateChecks();
+    }
+
+    private void initializeListenersAndAnalyticsAndUpdateChecks() {
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         findViewById(R.id.generate).setOnClickListener(this::generateButtonListener);
         findViewById(R.id.helpFloatingActionButton).setOnClickListener(this::helpFloatingActionButtonListener);
@@ -106,9 +115,18 @@ public class MainActivity extends Activity {
     }
 
     private void restoreAgentFlagsAndRecyclerView(@NonNull Bundle savedInstanceState) {
-        agentFlags = (AgentFlag) savedInstanceState.getSerializable("agentFlags");
-        //noinspection unchecked
-        agentDataList = (ArrayList<AgentData>) savedInstanceState.getSerializable("agentDataList");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            agentFlags = (AgentFlag) savedInstanceState.getSerializable("agentFlags", AgentFlag.class);
+        } else {
+            agentFlags = (AgentFlag) savedInstanceState.getSerializable("agentFlags");
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            //noinspection unchecked
+            agentDataList = (ArrayList<AgentData>) savedInstanceState.getSerializable("agentDataList", ArrayList.class);
+        } else {
+            //noinspection unchecked
+            agentDataList = (ArrayList<AgentData>) savedInstanceState.getSerializable("agentDataList");
+        }
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
 
         initializeRecyclerViewWithCurrentData();

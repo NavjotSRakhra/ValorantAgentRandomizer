@@ -74,7 +74,7 @@ public class Update {
             isDownloaded = true;
             SharedPreferences.Editor ed = context.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).edit();
             ed.putString("fileName", updatePath);
-            ed.commit();
+            ed.apply();
             downloadStream.close();
             downloadConnection.disconnect();
 
@@ -85,28 +85,28 @@ public class Update {
 
     public void install() throws FileNotFoundException {
 
-        Intent install;
+//        Intent install;
 
         String fileName = context.getSharedPreferences("downloadedFileName", Context.MODE_PRIVATE).getString("fileName", null);
         if (fileName != null) {
-            Uri apkURI = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", new File(fileName));
-            install = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-            install.setData(apkURI);
-            install.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            context.startActivity(install);
+            installPackage(new File(fileName));
             return;
         }
 
         if (!isDownloaded) {
             throw new FileNotFoundException("File not Downloaded");
         }
+        installPackage(downloadFile);
 
+    }
+
+    private void installPackage(File downloadFile) {
+        Intent install;
         Uri apkURI = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", downloadFile);
         install = new Intent(Intent.ACTION_INSTALL_PACKAGE);
         install.setData(apkURI);
         install.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         context.startActivity(install);
-
     }
 
     public static void deleteFile(Context context) {
