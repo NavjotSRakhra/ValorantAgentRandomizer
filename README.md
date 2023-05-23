@@ -8,7 +8,7 @@ solve that problem with some extra quality of life features. I will try to make
 it better over time by keeping it up to date and fixing any bugs that I notice
  or are brought to my attention.
 ## How to download
-[Click here](https://github.com/NavjotSRakhra/ValorantAgentRandomizer/releases/download/v1.1.7Valorant.Agent.Randomizer.v1.1.7apk) to download the latest version Or to use this application you simply have to download it from the **Releases** section
+[Click here](https://github.com/NavjotSRakhra/ValorantAgentRandomizer/releases/download/v1.1.7/Valorant.Agent.Randomizer.v1.1.7apk) to download the latest version Or to use this application you simply have to download it from the **Releases** section
 on Github and download the latest version.
 ### Application requirements
 The app requires a minimum of Android API 26. This means the app will run on 
